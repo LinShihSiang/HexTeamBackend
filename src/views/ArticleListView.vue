@@ -64,14 +64,14 @@
       ref="editArticleModal">
     </EditArticleModalComponent>
 
-    <!-- <delete-product-modal-component
-      :product-detail="productDetail"
+    <DeleteArticleModalComponent
+      :article-detail="articleDetail"
       :confirm-delete="confirmDelete"
       ref="delArticleModal">
-    </delete-product-modal-component>
+    </DeleteArticleModalComponent>
 
-    <product-modal-component
-      :product-detail="productDetail"
+    <!-- <product-modal-component
+      :product-detail="articleDetail"
       ref="productModal">
     </product-modal-component> -->
   </div>
@@ -80,6 +80,7 @@
 import axios from 'axios'
 import PaginationComponent from '../components/PaginationComponent.vue'
 import EditArticleModalComponent from '../components/EditArticleModalComponent.vue'
+import DeleteArticleModalComponent from '../components/DeleteArticleModalComponent.vue'
 
 const productCountPerPage = 3
 const token = document.cookie
@@ -134,7 +135,7 @@ export default {
             return
           }
 
-          this.articles = Object.values(response.data.articles)
+          this.articles = response.data.articles.sort((x, y) => parseInt(y.create_at) - parseInt(x.create_at))
         })
         .catch((error) => {
           alert(error.response.data.message)
@@ -165,7 +166,7 @@ export default {
     },
     confirmDelete () {
       axios
-        .delete(`${import.meta.env.VITE_APP_API_URL}/api/${import.meta.env.VITE_APP_API_NAME}/admin/article/${this.productDetail.id}`)
+        .delete(`${import.meta.env.VITE_APP_API_URL}/api/${import.meta.env.VITE_APP_API_NAME}/admin/article/${this.articleDetail.id}`)
         .then((response) => {
           this.getArticles()
 
@@ -177,10 +178,9 @@ export default {
     },
     editArticle (item = null) {
       this.is_addArticle = item == null
+      this.editItem = { }
 
-      if (this.is_addArticle) {
-        this.editItem = { }
-      } else {
+      if (!this.is_addArticle) {
         this.getArticle(item.id)
       }
 
@@ -230,9 +230,9 @@ export default {
       this.confirmEdit()
     },
     showDate (ticks) {
-      const date = new Date(ticks)
-      const month = date.getMonth() < 10 ? `0${date.getMonth()}` : date.getMonth()
-      const day = date.getDay() < 10 ? `0${date.getDay()}` : date.getDay()
+      const date = new Date(parseInt(ticks))
+      const month = date.getMonth() < 10 ? `0${date.getMonth() + 1}` : date.getMonth()
+      const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
       const hour = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
       const min = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
       const second = date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()
@@ -242,7 +242,8 @@ export default {
   },
   components: {
     PaginationComponent,
-    EditArticleModalComponent
+    EditArticleModalComponent,
+    DeleteArticleModalComponent
   }
 }
 </script>

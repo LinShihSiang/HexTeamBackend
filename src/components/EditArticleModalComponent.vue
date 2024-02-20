@@ -187,7 +187,8 @@ export default {
       this.editResult = newVal
 
       if (newVal.create_at) {
-        this.createTime = new Date(parseInt(newVal.create_at)).toISOString().slice(0, 16)
+        const localTime = new Date(parseInt(newVal.create_at))
+        this.createTime = new Date(parseInt(localTime.getTime() - localTime.getTimezoneOffset() * 60000)).toISOString().slice(0, -1)
       } else {
         this.createTime = ''
       }
