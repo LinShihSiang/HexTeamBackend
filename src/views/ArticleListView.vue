@@ -231,13 +231,16 @@ export default {
     },
     showDate (ticks) {
       const date = new Date(parseInt(ticks))
-      const month = date.getMonth() < 10 ? `0${date.getMonth() + 1}` : date.getMonth()
-      const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
-      const hour = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
-      const min = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
-      const second = date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()
+      const localTime = date.toLocaleString('zh', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      })
 
-      return `${date.getFullYear()}-${month}-${day} ${hour}:${min}:${second}`
+      return `${localTime}`
     }
   },
   components: {
